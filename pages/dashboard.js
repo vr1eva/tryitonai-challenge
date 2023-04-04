@@ -1,29 +1,35 @@
-import Head from 'next/head';
-import images from "./images.json"
-import { CldImage } from 'next-cloudinary';
+
 import useSWR from 'swr';
-const fetcher = (url) => fetch(url).then((res) => res.json());
+import {useState} from "react"
+import { CldImage } from 'next-cloudinary';
+
 
 export default function Dashboard() {
-  const { data, error } = useSWR('/api/staticdata', fetcher);
-
+  const [selectedImageId, setSelectedImageId] = useState(null);
+  const { data, error } = useSWR('/api/staticdata', async (url) => {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data;
+  });
+  const handleImageClick = (id) => {
+    setSelectedImageId(id);
+  };
+  
+  if (error) return <div>Failed to load</div>;
+  if (!data) return <div>Loading...</div>;
+  const parsed = JSON.parse(data)
+  console.log(parsed.images)
   return (
-    <div>
-      <Head>
-        <title>Dashboard</title>
-      </Head>
-
-      <main className="container">
-        {/* {images.map(url => (
-          <p>{url}</p>
-        ))} */}
-
+    <div className="grid grid-cols-5 gap-4">
+     {parsed.images.map((imageId, index) => (
         <CldImage
-          width="600"
-          height="600"
-          src="<Public ID>" />
-
-      </main>
+        key={index}
+        className={`cursor-pointer rounded-lg object-cover h-full w-full`}
+        width="600"
+        height="600"
+        src={imageId}
+        onClick={() => handleImageClick(imageId)} />
+     ))}
     </div>
   );
 }
