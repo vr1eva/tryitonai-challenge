@@ -1,3 +1,3 @@
 # tryitonai-challenge
 
-[Edit on StackBlitz ⚡️](https://stackblitz.com/edit/nextjs-amsi7d)
+Execute npm run dev after installing the dependencies to run the project locally.
